@@ -1,0 +1,127 @@
+body{
+    background-color: #323437;
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto Mono", monospace;
+}
+
+.screen{
+    height: calc(100vh - 4rem);
+}
+
+a{
+    text-decoration: none;
+}
+
+.text-primary{
+    color: #D1D0C5;
+}
+
+.title{
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.text-panel{
+    color: #646669;
+    font-size: 0.8rem;
+    transition: color 100ms ease-in-out;
+}
+
+.text-board{
+    color: #646669;
+    font-size: 2rem;
+    text-align: justify;
+}
+
+.flex, .y-center, .x-center, .flex-between, .center{
+    display: flex;
+}
+
+.column{
+    flex-direction: column;
+}
+
+.flex-between{
+    justify-content: space-between;
+}
+
+.y-center, .center{
+    align-items: center;
+}
+
+.x-center, .center{
+    justify-content: center;
+}
+
+.gap-2{
+    gap: 2rem;
+}
+
+.gap-1{
+    gap: 1rem;
+}
+
+.px-12{
+    padding-right: 12rem;
+    padding-left: 12rem;
+}
+
+.py-2{
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.icon-small{
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.icon-white{
+    filter: invert(40%) sepia(10%);
+}
+
+.icon-white:hover{
+    filter: invert(70%) sepia(10%);
+}
+
+.width-full{
+    width: 100%;
+}
+
+.panel{
+    position: absolute;
+    top: 0;
+    background-color: #2C2E31;
+    /* padding: 0.4rem 3rem; */
+    border-radius: 0.4rem;
+    max-width: max-content;
+    transition: max-width 200ms ease-in-out, width 200ms ease-in-out;
+}
+
+.button-panel{
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.button-panel:hover .text-panel{
+    color: #D1D0C5;
+}
+
+.button-panel:first-child{
+    margin-left: 0.5rem;
+}
+
+.button-panel:last-child{
+    margin-right: 0.5rem;
+}
+
+.spacer{
+    border: 3px solid #323437;
+    border-radius: 1rem;
+}
+
+.main-game{
+    position: relative;
+    height: 100%;
+}
