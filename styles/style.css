@@ -13,6 +13,11 @@ a{
     text-decoration: none;
 }
 
+.logo{
+    width: 3.5rem;
+    height: 2.4rem;
+}
+
 .text-primary{
     color: #D1D0C5;
 }
@@ -22,7 +27,7 @@ a{
     font-weight: bold;
 }
 
-.text-panel{
+.text-panel, .text-footer{
     color: #646669;
     font-size: 0.8rem;
     transition: color 100ms ease-in-out;
@@ -62,6 +67,14 @@ a{
     gap: 1rem;
 }
 
+.gap-s{
+    gap: 0.2rem;
+}
+
+.gap-m{
+    gap: 0.3rem;
+}
+
 .px-12{
     padding-right: 12rem;
     padding-left: 12rem;
@@ -79,9 +92,10 @@ a{
 
 .icon-white{
     filter: invert(40%) sepia(10%);
+    transition: filter 100ms ease-in-out;
 }
 
-.icon-white:hover{
+.text-footer:hover .icon-white, .icon-white:hover, .button-panel:hover .icon-white{
     filter: invert(70%) sepia(10%);
 }
 
@@ -99,12 +113,21 @@ a{
     transition: max-width 200ms ease-in-out, width 200ms ease-in-out;
 }
 
-.button-panel{
+.button-panel, .text-footer{
     padding: 0.5rem 1rem;
     cursor: pointer;
 }
 
+.button-icon{
+    width: 1rem;
+    height: 1rem;
+}
+
 .button-panel:hover .text-panel{
+    color: #D1D0C5;
+}
+
+.text-footer:hover {
     color: #D1D0C5;
 }
 
