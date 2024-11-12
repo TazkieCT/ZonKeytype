@@ -7,7 +7,7 @@
 }
 
 body{
-    transition: background-color 0.1s ease-in-out;
+    transition: background-color 0.1s ease-in-out, color 100ms ease-in-out;
     background-color: var(--quaternaryColor);
     margin: 0;
     padding: 0;
@@ -25,6 +25,8 @@ a{
 .logo{
     width: 3rem;
     height: 2.4rem;
+    margin-right: 0.5rem;
+    color: var(--primaryColor);
 }
 
 .text-primary{
@@ -97,6 +99,8 @@ a{
 .icon-small{
     width: 1.5rem;
     height: 1.5rem;
+    color: var(--tertiaryColor);
+    cursor: pointer;
 }
 
 .width-full{
@@ -106,7 +110,7 @@ a{
 .panel{
     position: absolute;
     top: 0;
-    background-color: #2C2E31;
+    background-color: var(--quinaryColor);
     /* padding: 0.4rem 3rem; */
     border-radius: 0.4rem;
     max-width: max-content;

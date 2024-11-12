@@ -19,13 +19,23 @@ const themeColorsArray = [
         }
     },
     {
-        name: "arch",
+        name: "bushido",
         colors: {
             primaryColor: "#F44C7F",
             secondaryColor: "#E9ECF0",
             tertiaryColor: "#939EAE",
             quaternaryColor: "#333A45",
-            quinaryColor: "#45474A"
+            quinaryColor: "#1C222D"
+        }
+    },
+    {
+        name: "brat",
+        colors: {
+            primaryColor: "#080808",
+            secondaryColor: "#080808",
+            tertiaryColor: "#080808",
+            quaternaryColor: "#8ED008",
+            quinaryColor: "#AEE028"
         }
     },
     {
@@ -35,7 +45,7 @@ const themeColorsArray = [
             secondaryColor: "#EEEEEE",
             tertiaryColor: "#444444",
             quaternaryColor: "#111111",
-            quinaryColor: "#181A1D"
+            quinaryColor: "#191919"
         }
     },
     {
@@ -45,17 +55,17 @@ const themeColorsArray = [
             secondaryColor: "#FFAAAA",
             tertiaryColor: "#FF6060",
             quaternaryColor: "#6E2626",
-            quinaryColor: "#6B6E71"
+            quinaryColor: "#3F1616"
         }
     },
     {
-        name: "toys",
+        name: "desert oasis",
         colors: {
             primaryColor: "#D19D01",
             secondaryColor: "#332800",
             tertiaryColor: "#0061FE",
             quaternaryColor: "#FFF2D5",
-            quinaryColor: "#6B6E71"
+            quinaryColor: "#EDDEBC"
         }
     },
     {
@@ -65,7 +75,7 @@ const themeColorsArray = [
             secondaryColor: "#000000",
             tertiaryColor: "#B7B7B7",
             quaternaryColor: "#FFFFFF",
-            quinaryColor: "#6B6E71"
+            quinaryColor: "#ECECEC"
         }
     }, 
     {
@@ -75,17 +85,17 @@ const themeColorsArray = [
             secondaryColor: "#1D1E1E",
             tertiaryColor: "#1E107A",
             quaternaryColor: "#FFF9F2",
-            quinaryColor: "#6B6E71"
+            quinaryColor: "#E5DDD4"
         }
     }, 
     {
-        name: "pie",
+        name: "ryujinscales",
         colors: {
             primaryColor: "#F17754",
             secondaryColor: "#FFBC90",
             tertiaryColor: "#FFE4BC",
             quaternaryColor: "#081426",
-            quinaryColor: "#6B6E71"
+            quinaryColor: "#040E1D"
         }
     }, 
 ];
