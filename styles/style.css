@@ -1,14 +1,14 @@
 :root {
-    --primaryColor: #FFB800; /* Color Logo */
-    --secondaryColor: #D1D0C5; /* Color Logo Teks */
-    --tertiaryColor: #646669; /* Color Teks Konten */
-    --quaternaryColor: #323437; /* Color Background Web */
-    --quinaryColor: #2C2E31; /* Color Sub-Background Web (Lebih gelap) */
+    --logoColor: #FFB800; /* Color Logo */
+    --logoTextColor: #D1D0C5; /* Color Logo Teks */
+    --textColor: #646669; /* Color Teks Konten */
+    --backgroundColor: #323437; /* Color Background Web */
+    --subBackgroundColor: #2C2E31; /* Color Sub-Background Web (Lebih gelap) */
 }
 
 body{
     transition: background-color 0.1s ease-in-out, color 100ms ease-in-out;
-    background-color: var(--quaternaryColor);
+    background-color: var(--backgroundColor);
     margin: 0;
     padding: 0;
     font-family: "Roboto Mono", monospace;
@@ -26,11 +26,11 @@ a{
     width: 3rem;
     height: 2.4rem;
     margin-right: 0.5rem;
-    color: var(--primaryColor);
+    color: var(--logoColor);
 }
 
 .text-primary{
-    color: var(--secondaryColor);
+    color: var(--logoTextColor);
 }
 
 .title{
@@ -39,15 +39,41 @@ a{
 }
 
 .text-panel, .text-footer{
-    color: var(--tertiaryColor);
+    color: var(--textColor);
     font-size: 0.8rem;
     transition: color 100ms ease-in-out;
 }
 
-.text-board{
-    color: var(--tertiaryColor);
+.game{
+    position: relative;
+    display: flex;
+}
+
+.timer{
+    color: var(--logoTextColor);
+    position: absolute;
+    top: -3rem;
     font-size: 2rem;
-    text-align: justify;
+    margin: 0.25em 0.3em;
+}
+
+.reload{
+    position: absolute;
+    bottom: -3rem;
+    left: 50%;
+    font-size: 2rem;
+}
+
+.text-board{
+    color: var(--textColor);
+    font-size: 2rem;
+    /* Width ganti jadi px atau rem */
+    width: 80vw;
+    height: 20vh;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    /* text-overflow: clip; */
 }
 
 .flex, .y-center, .x-center, .flex-between, .center{
@@ -99,7 +125,7 @@ a{
 .icon-small{
     width: 1.5rem;
     height: 1.5rem;
-    color: var(--tertiaryColor);
+    color: var(--textColor);
     cursor: pointer;
 }
 
@@ -110,7 +136,7 @@ a{
 .panel{
     position: absolute;
     top: 0;
-    background-color: var(--quinaryColor);
+    background-color: var(--subBackgroundColor);
     /* padding: 0.4rem 3rem; */
     border-radius: 0.4rem;
     max-width: max-content;
@@ -128,11 +154,11 @@ a{
 }
 
 .button-panel:hover .text-panel{
-    color: var(--secondaryColor);
+    color: var(--logoTextColor);
 }
 
 .icon-hover:hover {
-    color: var(--secondaryColor);
+    color: var(--logoTextColor);
 }
 
 .button-panel:first-child{
@@ -144,7 +170,7 @@ a{
 }
 
 .spacer{
-    border: 3px solid var(--quaternaryColor);
+    border: 3px solid var(--backgroundColor);
     border-radius: 1rem;
 }
 
@@ -171,13 +197,13 @@ a{
 }
 
 .modal-content {
-    background-color: var(--quaternaryColor);
+    background-color: var(--backgroundColor);
     padding: 20px;
     border-radius: 5px;
     width: 300px;
     text-align: center;
-    color: var(--tertiaryColor);
-    box-shadow: 0 0 0 .2em var(--quinaryColor);
+    color: var(--textColor);
+    box-shadow: 0 0 0 .2em var(--subBackgroundColor);
 }
 
 .close-button {
@@ -186,4 +212,26 @@ a{
     right: 15px;
     font-size: 20px;
     cursor: pointer;
+}
+
+.correct {
+    color: var(--logoTextColor);
+}
+
+.incorrect {
+    color: red;
+}
+
+.extra {
+    color: darkred;
+}
+
+.word {
+    display: inline;
+    margin: 0.3em;
+    line-height: 1em;
+}
+
+.hide {
+    opacity: 0;
 }
