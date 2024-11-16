@@ -219,11 +219,11 @@ a{
 }
 
 .incorrect {
-    color: red;
+    color: rgb(214, 7, 7);
 }
 
 .extra {
-    color: darkred;
+    color: rgb(88, 0, 0);
 }
 
 .word {
@@ -234,4 +234,9 @@ a{
 
 .hide {
     opacity: 0;
+}
+
+.error {
+    /* GANTI JADI WARNA ERROR (NANTI DTAMBAHIN VAR COLOR BARU) */
+    text-decoration: underline rgb(214, 7, 7) 2px;
 }

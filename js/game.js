@@ -7,8 +7,8 @@ const inputText = document.getElementById("text-input");
 let press = false;
 let interval;
 
-function isLetter(str) {
-    return str.length === 1 && str.match(/[a-zA-Z]/i);
+function isNotSymbol(str) {
+    return str.length === 1 && str.match(/[a-zA-Z0-9]/i);
 }
 
 function reduceTime(){
@@ -61,6 +61,7 @@ let idx = 0;
 let wordIdx = 0;
 let letterIdx = 0;
 let words;
+let error = false;
 
 reload.addEventListener("click", restart);
 document.addEventListener("DOMContentLoaded", () => {
@@ -75,43 +76,96 @@ document.addEventListener("keydown", (event) => {
         press = true;
         interval = reduceTime();
     }
+
     if(event.key == ' '){
         if(letterIdx != 0){
+            console.log("DIF", letterIdx, words[wordIdx].length)
+            if(error || letterIdx != words[wordIdx].length){
+                const currentWord = inputText.querySelectorAll(".word")[wordIdx];
+                currentWord.classList.add("error");
+            }
             wordIdx++;
             // console.log(wordIdx);
             letterIdx = 0;
+            error = false;
         }
     }
-    if (isLetter(event.key)) {
+
+    if (isNotSymbol(event.key)) {
+        const currentWordDiv = inputText.querySelectorAll(".word")[wordIdx];
+        const currentLetters = currentWordDiv.querySelectorAll("letter");
+
         console.log(Array.from(words[wordIdx])[letterIdx] + " " + event.key);
 
-        if (Array.from(words[wordIdx])[letterIdx] == event.key) {
-            console.log("Benar");
+        if (letterIdx < words[wordIdx].length) {
+            // Correct letter
+            if (Array.from(words[wordIdx])[letterIdx] == event.key) {
+                console.log("Benar");
 
-            const currentWord = inputText.querySelectorAll(".word")[wordIdx];
-            const currentLetter = currentWord.querySelectorAll("letter")[letterIdx];
+                const currentLetter = currentLetters[letterIdx];
+                if (currentLetter) {
+                    currentLetter.classList.add("correct");
+                }
+            } 
+            // Incorrect letter
+            else {
+                console.log("Salah");
 
-            currentLetter.classList.add("correct");
+                error = true;
+                const currentLetter = currentLetters[letterIdx];
+                if (currentLetter) {
+                    currentLetter.classList.add("incorrect");
+                }
+            }
+        } else {
+            // Extra letter (insert new letter dynamically)
+            console.log("Extra");
 
-        } else if(letterIdx <= words[wordIdx].length) {
-            console.log("Salah");
+            error = true;
 
-            const currentWord = inputText.querySelectorAll(".word")[wordIdx];
-            const currentLetter = currentWord.querySelectorAll("letter")[letterIdx];
+            const extraLetterSpan = document.createElement("letter");
+            extraLetterSpan.textContent = event.key;
+            extraLetterSpan.classList.add("extra");
+            currentWordDiv.appendChild(extraLetterSpan);
 
-            currentLetter.classList.add("incorrect");
-        } else{
-            const currentWord = inputText.querySelectorAll(".word")[wordIdx];
-            const currentLetter = currentWord.querySelectorAll("letter")[letterIdx];
-
-            currentLetter.classList.add("extra");
+            words[wordIdx] += event.key;
         }
 
         idx++;
         letterIdx++;
     }
-    if(event.key === 'Backspace'){
 
+    if (event.key === 'Backspace') {
+        const currentWordDiv = inputText.querySelectorAll(".word")[wordIdx];
+        const currentLetters = currentWordDiv.querySelectorAll("letter");
+
+        if (letterIdx > 0) {
+            letterIdx--;
+
+            const currentLetter = currentLetters[letterIdx];
+            if (currentLetter) {
+                if(currentLetter.classList.contains(".extra")){
+                    currentWordDiv.removeChild(currentLetter);
+                }else{
+                    currentLetter.classList.remove("correct", "incorrect");
+                }
+            }
+        } else if (wordIdx > 0) {
+            wordIdx--;
+            letterIdx = words[wordIdx].length;
+
+            const currentLetter = currentWordDiv.querySelector("letter:last-child");
+            if (currentLetter && currentWordDiv) {
+                currentLetter.classList.remove("correct", "incorrect", "extra");
+            }
+        }
+
+        if (currentLetters[letterIdx] && currentLetters[letterIdx].classList.contains("extra")) {
+            currentWordDiv.removeChild(currentLetters[letterIdx]);
+            words[wordIdx] = words[wordIdx].slice(0, -1);
+        }
+
+        error = Array.from(currentLetters).some(letter => letter.classList.contains("incorrect") || letter.classList.contains("extra"));
     }
 })
 
