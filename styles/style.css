@@ -204,6 +204,7 @@ a{
     text-align: center;
     color: var(--textColor);
     box-shadow: 0 0 0 .2em var(--subBackgroundColor);
+    position: relative;
 }
 
 .close-button {
@@ -212,6 +213,11 @@ a{
     right: 15px;
     font-size: 20px;
     cursor: pointer;
+}
+
+.theme-title{
+    margin: 0;
+    padding-bottom: 5px;
 }
 
 .correct {
@@ -236,7 +242,48 @@ a{
     opacity: 0;
 }
 
+/* CARA KE 1 */
 .error {
     /* GANTI JADI WARNA ERROR (NANTI DTAMBAHIN VAR COLOR BARU) */
-    text-decoration: underline rgb(214, 7, 7) 2px;
+    text-decoration: underline rgb(214, 7, 7) 3px;
+}
+
+
+/* CARA KE 2 BUAT BIKIN GARIS ERROR BIAR JARAK KEBAWAH DIKIT */
+/* .error {
+    position: relative;
+    text-decoration: none;
+}
+
+.error::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: rgb(214, 7, 7);
+} */
+
+#cursor {
+    width: 2px;
+    border-radius: 1rem;
+    height: 2rem;
+    background-color: var(--logoColor);
+    animation: blink 1s infinite;
+    position: fixed;
+    top: 390px;
+    left: 200px;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }

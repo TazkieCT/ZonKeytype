@@ -1,4 +1,4 @@
-let time = 5;
+let time = 15;
 
 const timer = document.getElementById("timer");
 const reload = document.getElementById("reload");
@@ -16,7 +16,6 @@ function reduceTime(){
         if (press && time > 0){
             timer.innerHTML = time > 0 ? --time : 0;
         }
-        // console.log(time);   
     }, 1000)
 }
 
@@ -48,7 +47,7 @@ function generateRandomString(){
 }
 
 function restart(){
-    time = 5;
+    time = 15;
     press = false;
     clearInterval(interval);
     input = [];
@@ -62,6 +61,10 @@ let wordIdx = 0;
 let letterIdx = 0;
 let words;
 let error = false;
+let wrong = 0;
+let extra = 0;
+let wpm = []; // Jumlah huruf yang diketik benar
+let raw = []; // Jumlah huruf yang diketik benar dan salah
 
 reload.addEventListener("click", restart);
 document.addEventListener("DOMContentLoaded", () => {
@@ -98,7 +101,6 @@ document.addEventListener("keydown", (event) => {
         console.log(Array.from(words[wordIdx])[letterIdx] + " " + event.key);
 
         if (letterIdx < words[wordIdx].length) {
-            // Correct letter
             if (Array.from(words[wordIdx])[letterIdx] == event.key) {
                 console.log("Benar");
 
@@ -107,18 +109,16 @@ document.addEventListener("keydown", (event) => {
                     currentLetter.classList.add("correct");
                 }
             } 
-            // Incorrect letter
             else {
                 console.log("Salah");
-
                 error = true;
+
                 const currentLetter = currentLetters[letterIdx];
                 if (currentLetter) {
                     currentLetter.classList.add("incorrect");
                 }
             }
         } else {
-            // Extra letter (insert new letter dynamically)
             console.log("Extra");
 
             error = true;
@@ -139,6 +139,7 @@ document.addEventListener("keydown", (event) => {
         const currentWordDiv = inputText.querySelectorAll(".word")[wordIdx];
         const currentLetters = currentWordDiv.querySelectorAll("letter");
 
+        // Ini kalau misalnya lagi di huruf ke 1 sampai akhir kata
         if (letterIdx > 0) {
             letterIdx--;
 
@@ -150,6 +151,7 @@ document.addEventListener("keydown", (event) => {
                     currentLetter.classList.remove("correct", "incorrect");
                 }
             }
+        // Ini kalau misalnya lagi di awal kata dan belum ada huruf sama sekali balik ke sebelumnya
         } else if (wordIdx > 0) {
             wordIdx--;
             letterIdx = words[wordIdx].length;
@@ -158,6 +160,9 @@ document.addEventListener("keydown", (event) => {
             if (currentLetter && currentWordDiv) {
                 currentLetter.classList.remove("correct", "incorrect", "extra");
             }
+
+            const currentWord = inputText.querySelectorAll(".word")[wordIdx];
+            currentWord.classList.remove("error");
         }
 
         if (currentLetters[letterIdx] && currentLetters[letterIdx].classList.contains("extra")) {
