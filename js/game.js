@@ -6,6 +6,8 @@ const inputText = document.getElementById("text-input");
 
 let press = false;
 let interval;
+let afkTimeout;
+let isAFK = false;
 
 function isNotSymbol(str) {
     return str.length === 1 && str.match(/[a-zA-Z0-9]/i);
@@ -13,7 +15,7 @@ function isNotSymbol(str) {
 
 function reduceTime(){
     return setInterval(() => {
-        if (press && time > 0){
+        if (press && time > 0 && !isAFK) {
             timer.innerHTML = time > 0 ? --time : 0;
         }
     }, 1000)
@@ -46,14 +48,43 @@ function generateRandomString(){
     }
 }
 
-function restart(){
+function restart() {
     time = 15;
     press = false;
     clearInterval(interval);
-    input = [];
+    clearTimeout(afkTimeout);
+    isAFK = false;
+
+    idx = 0;
+    wordIdx = 0;
+    letterIdx = 0;
+    error = false;
+
+    wrong = 0;
+    extra = 0;
+    wpm = [];
+    raw = [];
+    
     timer.innerHTML = time;
+    inputText.innerHTML = "";
+    
     generateRandomString();
-    getAllWordsAndLetters();
+    words = getAllWordsAndLetters();
+
+    updateCursorPosition();
+}
+
+
+function resetAFKTimeout() {
+    if (isAFK) {
+        console.log("Back from AFK");
+        isAFK = false;
+    }
+    clearTimeout(afkTimeout);
+    afkTimeout = setTimeout(() => {
+        isAFK = true;
+        console.log("AFK");
+    }, 3000);
 }
 
 let idx = 0;
@@ -73,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("keydown", (event) => {
+    resetAFKTimeout();
     timer.innerHTML = time;
     
     if(event.key != null & !press){
@@ -231,7 +263,10 @@ function updateCursorPosition() {
             cursor.style.left = `${rect.right}px`;  
         }
     }
-}  
+}
+
+window.addEventListener("resize", updateCursorPosition);
+window.addEventListener("scroll", updateCursorPosition);
 
 document.addEventListener("keydown", (event) => { 
     if (isNotSymbol(event.key)) { 
@@ -243,7 +278,7 @@ document.addEventListener("keydown", (event) => {
     }  
 
     if (event.key === 'Backspace') { 
-        updateCursorPosition();  
+        updateCursorPosition();
     }  
 });  
 

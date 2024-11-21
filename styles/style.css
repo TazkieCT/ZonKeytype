@@ -44,9 +44,16 @@ a{
     transition: color 100ms ease-in-out;
 }
 
-.game{
+/* VERSI LAMA */
+/* .game{
     position: relative;
     display: flex;
+} */
+
+.game {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .timer{
@@ -64,16 +71,28 @@ a{
     font-size: 2rem;
 }
 
-.text-board{
+/* VERSI LAMA */
+/* .text-board{
     color: var(--textColor);
     font-size: 2rem;
-    /* Width ganti jadi px atau rem */
+    Width ganti jadi px atau rem
     width: 80vw;
     height: 20vh;
     display: flex;
     flex-wrap: wrap;
     overflow: hidden;
-    /* text-overflow: clip; */
+} */
+
+.text-board {
+    color: var(--textColor);
+    font-size: 2rem;
+    width: 80vw;
+    height: 20vh;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    line-height: 2rem;
+    align-content: flex-start;
 }
 
 .flex, .y-center, .x-center, .flex-between, .center{
@@ -232,10 +251,18 @@ a{
     color: rgb(88, 0, 0);
 }
 
-.word {
+/* VERSI LAMA */
+/* .word {
     display: inline;
     margin: 0.3em;
     line-height: 1em;
+} */
+
+.word {
+    display: inline-block;
+    margin: 0.3em;
+    line-height: 1;
+    vertical-align: middle;
 }
 
 .hide {
