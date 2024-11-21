@@ -272,11 +272,10 @@ a{
     background-color: var(--logoColor);
     animation: blink 1s infinite;
     position: fixed;
-    top: 390px;
-    left: 200px;
+    transition: left 80ms linear;
 }
 
-@keyframes blink {
+/* @keyframes blink {
     0% {
         opacity: 1;
     }
@@ -286,4 +285,4 @@ a{
     100% {
         opacity: 1;
     }
-}
+} */

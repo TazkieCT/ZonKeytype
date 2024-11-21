@@ -210,3 +210,35 @@ function getAllWordsAndLetters() {
 
     return allWords;
 }
+
+function updateCursorPosition() {  
+    const currentWordDiv = inputText.querySelectorAll(".word")[wordIdx];  
+    if (!currentWordDiv) return;
+
+    const currentLetters = currentWordDiv.querySelectorAll("letter");  
+    const currentLetter = currentLetters[letterIdx];  
+
+    if (currentLetter) {  
+        const rect = currentLetter.getBoundingClientRect();  
+        const cursor = document.getElementById("cursor");  
+
+        cursor.style.top = `${rect.top + 9}px`;
+        cursor.style.left = `${rect.left}px`;
+    }  
+}  
+
+document.addEventListener("keydown", (event) => { 
+    if (isNotSymbol(event.key)) { 
+        updateCursorPosition();  
+    }  
+
+    if (event.key === ' ') {  
+        updateCursorPosition();  
+    }  
+
+    if (event.key === 'Backspace') { 
+        updateCursorPosition();  
+    }  
+});  
+
+updateCursorPosition();  
