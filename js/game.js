@@ -218,13 +218,19 @@ function updateCursorPosition() {
     const currentLetters = currentWordDiv.querySelectorAll("letter");  
     const currentLetter = currentLetters[letterIdx];  
 
-    if (currentLetter) {  
+    if (letterIdx < currentLetters.length) {
+        const currentLetter = currentLetters[letterIdx];
         const rect = currentLetter.getBoundingClientRect();  
-        const cursor = document.getElementById("cursor");  
-
         cursor.style.top = `${rect.top + 9}px`;
         cursor.style.left = `${rect.left}px`;
-    }  
+    } else {
+        const lastLetter = currentLetters[currentLetters.length - 1];
+        if (lastLetter) {
+            const rect = lastLetter.getBoundingClientRect();  
+            cursor.style.top = `${rect.top + 9}px`;
+            cursor.style.left = `${rect.right}px`;  
+        }
+    }
 }  
 
 document.addEventListener("keydown", (event) => { 
