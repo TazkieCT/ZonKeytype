@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("keydown", (event) => {
     timer.innerHTML = time;
-    // console.log(words[wordIdx])
+    
     if(event.key != null & !press){
         press = true;
         interval = reduceTime();
@@ -82,13 +82,12 @@ document.addEventListener("keydown", (event) => {
 
     if(event.key == ' '){
         if(letterIdx != 0){
-            console.log("DIF", letterIdx, words[wordIdx].length)
-            if(error || letterIdx != words[wordIdx].length){
+            if(error || (letterIdx != words[wordIdx].length)){
                 const currentWord = inputText.querySelectorAll(".word")[wordIdx];
                 currentWord.classList.add("error");
             }
+            
             wordIdx++;
-            // console.log(wordIdx);
             letterIdx = 0;
             error = false;
         }
@@ -98,79 +97,104 @@ document.addEventListener("keydown", (event) => {
         const currentWordDiv = inputText.querySelectorAll(".word")[wordIdx];
         const currentLetters = currentWordDiv.querySelectorAll("letter");
 
-        console.log(Array.from(words[wordIdx])[letterIdx] + " " + event.key);
+        const extraLetters = currentWordDiv.querySelectorAll(".extra").length;
 
-        if (letterIdx < words[wordIdx].length) {
-            if (Array.from(words[wordIdx])[letterIdx] == event.key) {
-                console.log("Benar");
+        if (extraLetters < 7) {
+            if (letterIdx < words[wordIdx].length) {
+                if (Array.from(words[wordIdx])[letterIdx] == event.key) {
+                    const currentLetter = currentLetters[letterIdx];
+                    if (currentLetter) {
+                        currentLetter.classList.add("correct");
+                    }
+                } 
+                else {
+                    error = true;
 
-                const currentLetter = currentLetters[letterIdx];
-                if (currentLetter) {
-                    currentLetter.classList.add("correct");
+                    const currentLetter = currentLetters[letterIdx];
+                    if (currentLetter) {
+                        currentLetter.classList.add("incorrect");
+                    }
                 }
-            } 
-            else {
-                console.log("Salah");
+            } else {
                 error = true;
 
-                const currentLetter = currentLetters[letterIdx];
-                if (currentLetter) {
-                    currentLetter.classList.add("incorrect");
-                }
+                const extraLetterSpan = document.createElement("letter");
+                extraLetterSpan.textContent = event.key;
+                extraLetterSpan.classList.add("extra");
+                currentWordDiv.appendChild(extraLetterSpan);
+                words[wordIdx] += event.key;
             }
+
+            idx++;
+            letterIdx++;
         } else {
-            console.log("Extra");
-
-            error = true;
-
-            const extraLetterSpan = document.createElement("letter");
-            extraLetterSpan.textContent = event.key;
-            extraLetterSpan.classList.add("extra");
-            currentWordDiv.appendChild(extraLetterSpan);
-
-            words[wordIdx] += event.key;
+            // Kalau sudah mencapai batas 7 huruf ekstra, skip
+            return;
         }
-
-        idx++;
-        letterIdx++;
     }
 
     if (event.key === 'Backspace') {
         const currentWordDiv = inputText.querySelectorAll(".word")[wordIdx];
         const currentLetters = currentWordDiv.querySelectorAll("letter");
 
-        // Ini kalau misalnya lagi di huruf ke 1 sampai akhir kata
         if (letterIdx > 0) {
             letterIdx--;
 
             const currentLetter = currentLetters[letterIdx];
             if (currentLetter) {
-                if(currentLetter.classList.contains(".extra")){
+                if(currentLetter.classList.contains("extra")){
                     currentWordDiv.removeChild(currentLetter);
-                }else{
+                    words[wordIdx] = words[wordIdx].slice(0, -1);
+                } else {
                     currentLetter.classList.remove("correct", "incorrect");
                 }
             }
-        // Ini kalau misalnya lagi di awal kata dan belum ada huruf sama sekali balik ke sebelumnya
-        } else if (wordIdx > 0) {
+        // Ini kalau misalnya lagi di awal kata dan belum ada huruf sama sekali, balik ke kata sebelumnya
+        } 
+        else if (wordIdx > 0) {
             wordIdx--;
-            letterIdx = words[wordIdx].length;
+            const prevWordDiv = inputText.querySelectorAll(".word")[wordIdx];
+            const prevLetters = prevWordDiv.querySelectorAll("letter");
+            
+            letterIdx = prevLetters.length;
 
-            const currentLetter = currentWordDiv.querySelector("letter:last-child");
-            if (currentLetter && currentWordDiv) {
-                currentLetter.classList.remove("correct", "incorrect", "extra");
+            for (let i = prevLetters.length - 1; i >= 0; i--) {
+                if (prevLetters[i].classList.contains("correct") || 
+                    prevLetters[i].classList.contains("incorrect") || 
+                    prevLetters[i].classList.contains("extra")) {
+                    letterIdx = i + 1;
+                    break;  
+                }
             }
 
-            const currentWord = inputText.querySelectorAll(".word")[wordIdx];
-            currentWord.classList.remove("error");
+            // Hapus class error dari kata sebelumnya
+            prevWordDiv.classList.remove("error");
         }
 
-        if (currentLetters[letterIdx] && currentLetters[letterIdx].classList.contains("extra")) {
-            currentWordDiv.removeChild(currentLetters[letterIdx]);
-            words[wordIdx] = words[wordIdx].slice(0, -1);
+        //kode  CF
+        // ini tujuannnya override tentuin error O(n)
+    
+        let incorrectFlag = false
+        //find incorrect
+        const prevWordDiv = inputText.querySelectorAll(".word")[wordIdx];
+        const prevLetters = prevWordDiv.querySelectorAll("letter");
+        // console.log( prevLetters)
+        for (let i = prevLetters.length - 1; i >= 0; i--) {
+            if (prevLetters[i].classList.contains("incorrect")) {
+                incorrectFlag = true;
+                break;  
+            }
         }
-
-        error = Array.from(currentLetters).some(letter => letter.classList.contains("incorrect") || letter.classList.contains("extra"));
+        if(incorrectFlag) {
+            // kalau ga ada huruf salah, maka error
+            // prevWordDiv.classList.add("error");
+            error = true
+        }else{
+            // kalau ada huruf salah, maka error
+            prevWordDiv.classList.remove("error");
+            error=false;
+        }
+        //===============
     }
 })
 
@@ -183,8 +207,6 @@ function getAllWordsAndLetters() {
         const word = Array.from(letters).map(letterSpan => letterSpan.textContent).join("");
         allWords.push(word);
     });
-
-    console.log(allWords);
 
     return allWords;
 }
