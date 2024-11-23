@@ -79,11 +79,13 @@ function resetAFKTimeout() {
     if (isAFK) {
         console.log("Back from AFK");
         isAFK = false;
+        cursor.classList.remove("typing");
     }
     clearTimeout(afkTimeout);
     afkTimeout = setTimeout(() => {
         isAFK = true;
         console.log("AFK");
+        cursor.classList.add("typing");
     }, 3000);
 }
 
@@ -99,12 +101,18 @@ let raw = []; // Jumlah huruf yang diketik benar dan salah
 
 reload.addEventListener("click", restart);
 document.addEventListener("DOMContentLoaded", () => {
+    cursor.classList.add("typing");
     generateRandomString();
     words = getAllWordsAndLetters();
 });
 
 document.addEventListener("keydown", (event) => {
     resetAFKTimeout();
+
+    if (cursor.classList.contains("typing")) {
+        cursor.classList.remove("typing");
+    }
+
     timer.innerHTML = time;
     
     if(event.key != null & !press){

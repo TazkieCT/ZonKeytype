@@ -297,19 +297,25 @@ a{
     border-radius: 1rem;
     height: 2rem;
     background-color: var(--logoColor);
-    animation: blink 1s infinite;
     position: fixed;
     transition: left 80ms linear;
 }
 
-/* @keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-} */
+.typing {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* BIAR GK BISA DI SELECT HIGHLIGHT */
+body {
+    -khtml-user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
