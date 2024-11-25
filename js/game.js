@@ -1,13 +1,29 @@
 let time = 15;
+const initialTime = 15;
 
 const timer = document.getElementById("timer");
 const reload = document.getElementById("reload");
 const inputText = document.getElementById("text-input");
+const pause = document.getElementById("pause");
 
 let press = false;
 let interval;
 let afkTimeout;
 let isAFK = false;
+
+let correctCharacters = 0;
+const data = [];
+
+function hidePause() {
+    pause.style.display = "none";
+}
+
+function showPause() {
+    pause.style.display = "flex";
+}
+
+pause.addEventListener("click", hidePause);
+document.addEventListener("keydown", hidePause);
 
 function isNotSymbol(str) {
     return str.length === 1 && str.match(/[a-zA-Z0-9]/i);
@@ -17,9 +33,96 @@ function reduceTime(){
     return setInterval(() => {
         if (press && time > 0 && !isAFK) {
             timer.innerHTML = time > 0 ? --time : 0;
+
+            const elapsedMinutes = (initialTime  - time) / 60;
+            const currentWPM = elapsedMinutes > 0 ? Math.floor(correctCharacters / (5 * elapsedMinutes)) : 0;
+
+            data.push({ time: initialTime  - time, wpm: currentWPM });
         }
-    }, 1000)
+        if (time === 0) {
+            const game = document.querySelector(".main-game");
+            const result = document.getElementById("result");
+
+            game.style.display = "none";
+            result.style.display = "block";
+
+            clearInterval(interval);
+            
+            const maxValue = Math.max(...data.map(d => d.wpm));
+            const maxTime = Math.max(...data.map(d => d.time));
+            const chartHeight = 300;
+            const chartWidth = document.getElementById('chart').offsetWidth - 20;
+            
+            const chart = document.getElementById('chart');
+            const points = [];
+            
+            const ySteps = 5;
+            for (let i = 0; i <= ySteps; i++) {
+                const value = Math.round((maxValue / ySteps) * i);
+                const y = (value / maxValue) * chartHeight;
+            
+                const indicator = document.createElement('div');
+                indicator.className = 'y-indicator';
+                indicator.style.bottom = `${y}px`;
+                indicator.style.left = `0px`;
+            
+                const label = document.createElement('div');
+                label.className = 'label';
+                label.textContent = value;
+            
+                indicator.appendChild(label);
+                chart.appendChild(indicator);
+            }
+            
+            // Buat gambarin titik penghubung
+            data.forEach((item) => {
+                const x = (item.time / maxTime) * chartWidth;
+                const y = (item.wpm / maxValue) * chartHeight;
+            
+                const point = document.createElement('div');
+                point.className = 'point';
+                point.style.left = `${x}px`;
+                point.style.bottom = `${y + 2}px`;
+                point.style.width = "8px"
+                point.style.height = "8px"
+            
+                const label = document.createElement('div');
+                label.className = 'label';
+                label.textContent = item.time;
+                label.style.left = `${x}px`;
+                label.style.bottom = '-20px';
+            
+                chart.appendChild(point);
+                chart.appendChild(label);
+                points.push({ x, y });
+            });
+            
+            // Buat gambarin garis garis penghubung
+            for (let i = 0; i < points.length - 1; i++) {
+                const x1 = points[i].x;
+                const y1 = points[i].y;
+                const x2 = points[i + 1].x;
+                const y2 = points[i + 1].y;
+            
+                const line = document.createElement('div');
+                line.className = 'line';
+            
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                const angle = -Math.atan2(dy, dx) * (180 / Math.PI);
+            
+                line.style.width = `${length}px`;
+                line.style.transform = `rotate(${angle}deg)`;
+                line.style.left = `${x1}px`;
+                line.style.bottom = `${y1 + 10}px`;
+            
+                chart.appendChild(line);
+            }
+        }
+    }, 1000);
 }
+
 
 function generateRandomString(){
     const words = [
@@ -49,7 +152,8 @@ function generateRandomString(){
 }
 
 function restart() {
-    time = 15;
+    time = initialTime;
+    correctCharacters = 0;
     press = false;
     clearInterval(interval);
     clearTimeout(afkTimeout);
@@ -80,12 +184,14 @@ function resetAFKTimeout() {
         console.log("Back from AFK");
         isAFK = false;
         cursor.classList.remove("typing");
+        hidePause();
     }
     clearTimeout(afkTimeout);
     afkTimeout = setTimeout(() => {
         isAFK = true;
         console.log("AFK");
         cursor.classList.add("typing");
+        showPause();
     }, 3000);
 }
 
@@ -96,11 +202,10 @@ let words;
 let error = false;
 let wrong = 0;
 let extra = 0;
-let wpm = []; // Jumlah huruf yang diketik benar
-let raw = []; // Jumlah huruf yang diketik benar dan salah
 
 reload.addEventListener("click", restart);
 document.addEventListener("DOMContentLoaded", () => {
+    showPause();
     cursor.classList.add("typing");
     generateRandomString();
     words = getAllWordsAndLetters();
@@ -146,6 +251,7 @@ document.addEventListener("keydown", (event) => {
                     if (currentLetter) {
                         currentLetter.classList.add("correct");
                     }
+                    correctCharacters++;
                 } 
                 else {
                     error = true;
@@ -261,13 +367,13 @@ function updateCursorPosition() {
     if (letterIdx < currentLetters.length) {
         const currentLetter = currentLetters[letterIdx];
         const rect = currentLetter.getBoundingClientRect();  
-        cursor.style.top = `${rect.top + 9}px`;
+        cursor.style.top = `${rect.top + 5}px`;
         cursor.style.left = `${rect.left}px`;
     } else {
         const lastLetter = currentLetters[currentLetters.length - 1];
         if (lastLetter) {
             const rect = lastLetter.getBoundingClientRect();  
-            cursor.style.top = `${rect.top + 9}px`;
+            cursor.style.top = `${rect.top + 5}px`;
             cursor.style.left = `${rect.right}px`;  
         }
     }
@@ -290,4 +396,4 @@ document.addEventListener("keydown", (event) => {
     }  
 });  
 
-updateCursorPosition();  
+updateCursorPosition();
