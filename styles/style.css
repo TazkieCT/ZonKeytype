@@ -132,8 +132,11 @@ a{
 }
 
 .px-12{
-    padding-right: 12rem;
-    padding-left: 12rem;
+    padding-inline: 12rem;
+}
+
+.px-8{
+    padding-inline: 8rem;
 }
 
 .py-2{
@@ -170,6 +173,7 @@ a{
 .button-icon{
     width: 1rem;
     height: 1rem;
+    transition: color 100ms ease-in-out;
 }
 
 .button-panel:hover .text-panel{
@@ -411,4 +415,11 @@ body {
     transform: translateY(-50%);
     font-size: 12px;
     color: var(--textColor);
+}
+
+.divider {
+    height: 1.25rem;
+    width: 0.325rem;
+    background-color: var(--textColor);
+    border-radius: 0.25rem;
 }
