@@ -44,6 +44,10 @@ a{
     transition: color 100ms ease-in-out;
 }
 
+.button-mode{
+    color: var(--textColor);
+}
+
 /* VERSI LAMA */
 /* .game{
     position: relative;
@@ -57,7 +61,7 @@ a{
 }
 
 .timer{
-    color: var(--logoTextColor);
+    color: var(--logoColor);
     position: absolute;
     top: -3rem;
     font-size: 2rem;
@@ -69,6 +73,7 @@ a{
     bottom: -3rem;
     left: 50%;
     font-size: 2rem;
+    width: 4rem;
 }
 
 /* VERSI LAMA */
@@ -86,8 +91,8 @@ a{
 .text-board {
     color: var(--textColor);
     font-size: 2rem;
-    width: 80vw;
-    height: 20vh;
+    width: 97rem;
+    height: 10rem;
     display: flex;
     flex-wrap: wrap;
     overflow: hidden;
@@ -158,13 +163,14 @@ a{
     background-color: var(--subBackgroundColor);
     /* padding: 0.4rem 3rem; */
     border-radius: 0.4rem;
-    max-width: max-content;
+    /* max-width: max-content; */
     transition: max-width 200ms ease-in-out, width 200ms ease-in-out;
 }
 
 .button-panel, .text-footer{
     padding: 0.5rem 1rem;
     cursor: pointer;
+    color: var(--textColor);
 }
 
 .button-icon{
@@ -263,10 +269,15 @@ a{
     margin: 0.3em;
     line-height: 1;
     vertical-align: middle;
+    height: calc(30% - 0.3em);
 }
 
 .hide {
     opacity: 0;
+}
+
+.gone {
+    display: none;
 }
 
 /* CARA KE 1 */
@@ -341,7 +352,7 @@ body {
 
 .result {
     width: 80%;
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
     position: relative;
 }
@@ -385,14 +396,14 @@ body {
 }
 
 .chart .y-axis-label {
-    left: -130px;
+    left: -120px;
     top: 30%;
     transform: rotate(-90deg) translate(-50%, 0);
     transform-origin: center;
 }
 
 .chart .x-axis-label {
-    bottom: -40px;
+    bottom: -60px;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -412,3 +423,13 @@ body {
     font-size: 12px;
     color: var(--textColor);
 }
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.1s ease-out;
+  }
+  
+  .fade-in {
+    opacity: 1;
+    transition: opacity 0.1s ease-in;
+  }
