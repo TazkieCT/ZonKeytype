@@ -76,6 +76,14 @@ a{
     width: 4rem;
 }
 
+.restart{
+    position: absolute;
+    bottom: -7rem;
+    right: 46%;
+    font-size: 2rem;
+    width: 4rem;
+}
+
 /* VERSI LAMA */
 /* .text-board{
     color: var(--textColor);

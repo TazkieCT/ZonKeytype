@@ -58,7 +58,7 @@ function formatTime(seconds) {
         return seconds.toString();
     }
 }
-
+  
 function generateRandomString(){
     const words = [
         "apple", "banana", "orange", "grape", "watermelon", "cherry", "mango", "blueberry",
