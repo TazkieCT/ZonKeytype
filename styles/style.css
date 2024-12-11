@@ -76,12 +76,19 @@ a{
     width: 4rem;
 }
 
+.result-restart{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .restart{
-    position: absolute;
-    bottom: -7rem;
-    right: 46%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 2rem;
     width: 4rem;
+    cursor: pointer;
 }
 
 /* VERSI LAMA */
@@ -144,6 +151,11 @@ a{
     gap: 0.3rem;
 }
 
+.my-5-3{
+    margin-top: 5rem;
+    margin-bottom: 3rem;
+}
+
 .px-12{
     padding-inline: 12rem;
 }
@@ -166,6 +178,10 @@ a{
 
 .width-full{
     width: 100%;
+}
+
+.hidden{
+    display: none;
 }
 
 .panel{
@@ -194,7 +210,7 @@ a{
     color: var(--logoTextColor);
 }
 
-.icon-hover:hover {
+.icon-hover:hover, .restart:hover .icon-hover {
     color: var(--logoTextColor);
 }
 
@@ -276,9 +292,14 @@ a{
     line-height: 1em;
 } */
 
+#logo{
+    cursor: pointer;
+}
+
 .word {
     display: inline-block;
-    margin: 0.3em;
+    box-sizing: border-box;
+    margin: 0.2em 0.3em;
     line-height: 1;
     vertical-align: middle;
     height: calc(30% - 0.3em);
@@ -363,9 +384,9 @@ body {
 }
 
 .result {
-    width: 80%;
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: auto;
+    margin: 0 0 0 5rem;
     position: relative;
 }
 
@@ -375,6 +396,7 @@ body {
     border-left: 2px solid var(--textColor);
     border-bottom: 2px solid var(--textColor);
     padding: 10px;
+    /* margin-left: 1rem; */
 }
 
 .chart .line {
@@ -444,4 +466,25 @@ body {
 .fade-in {
 opacity: 1;
 transition: opacity 0.1s ease-in;
+}
+
+.result-title{
+    font-size: 2rem;
+    color: var(--textColor);
+}
+
+.result-value{
+    font-size: 6rem;
+    color: var(--logoColor);
+    line-height: 1;
+}
+
+.more-result-title{
+    font-size: 1.5rem;
+    color: var(--textColor);
+}
+
+.more-result-value{
+    font-size: 1.5rem;
+    color: var(--logoColor);
 }

@@ -1,10 +1,14 @@
-let time = 5;
-const initialTime = 5;
+let time = 30;
+const initialTime = 30;
 
 const timer = document.getElementById("timer");
 const reload = document.getElementById("reload");
 const inputText = document.getElementById("text-input");
 const pause = document.getElementById("pause");
+
+let totalWords = 25;
+let gameTime = 60;
+let gameMode = 'time';
 
 let press = false;
 let interval;
@@ -40,13 +44,30 @@ function reduceTime(){
             timer.innerHTML = formatTime(time);
 
             const elapsedMinutes = (initialTime - time) / 60;
-            const currentWPM = elapsedMinutes > 0 ? Math.floor(correctCharacters / (5 * elapsedMinutes)) : 0;
-            data.push({ time: initialTime - time, wpm: currentWPM });
+            const correctWPM = elapsedMinutes > 0 ? Math.floor(correctCharacters / (5 * elapsedMinutes)) : 0;
+            const rawWPM = elapsedMinutes > 0 ? Math.floor(rawCharacters / (5 * elapsedMinutes)) : 0;
+            
+            data.push({ time: initialTime - time, wpm: correctWPM });
+            dataRaw.push({ time: initialTime - time, wpm: rawWPM });
         }
         if (time === 0) {
             gameEnd();
         }
     }, 1000);
+}
+
+document.getElementById('timeOption').addEventListener('click', showTimeOptions);
+document.getElementById('wordOption').addEventListener('click', showWordOptions);
+
+function showTimeOptions(){
+    gameMode = "time";
+    console.log(gameMode);
+
+}
+
+function showWordOptions(){
+    gameMode = "word";
+    console.log(gameMode);
 }
 
 function formatTime(seconds) {
@@ -105,10 +126,11 @@ function restart() {
         letterIdx = 0;
         error = false;
 
-        wrong = 0;
-        extra = 0;
-        wpm = [];
-        raw = [];
+        // BELUM KEPAKAI
+        // wrong = 0;
+        // extra = 0;
+        // wpm = [];
+        // raw = [];
 
         data = [];
         dataRaw = [];
@@ -155,6 +177,7 @@ let wrong = 0;
 let extra = 0;
 
 reload.addEventListener("click", restart);
+logo.addEventListener("click", restart);
 document.addEventListener("DOMContentLoaded", () => {
     showPause();
     cursor.classList.add("typing");
@@ -171,7 +194,7 @@ document.addEventListener("keydown", (event) => {
 
     timer.innerHTML = formatTime(time);
     
-    if(event.key != null & !press){
+    if(event.key != null & !press && isNotSymbol(event.key)){
         press = true;
         interval = reduceTime();
     }
@@ -208,6 +231,7 @@ document.addEventListener("keydown", (event) => {
                         currentLetter.classList.add("correct");
                     }
                     correctCharacters++;
+                    rawCharacters++;
                 } 
                 else {
                     error = true;
@@ -216,6 +240,7 @@ document.addEventListener("keydown", (event) => {
                     if (currentLetter) {
                         currentLetter.classList.add("incorrect");
                     }
+                    rawCharacters++;
                 }
             } else {
                 error = true;
@@ -225,6 +250,7 @@ document.addEventListener("keydown", (event) => {
                 extraLetterSpan.classList.add("extra");
                 currentWordDiv.appendChild(extraLetterSpan);
                 words[wordIdx] += event.key;
+                rawCharacters++;
             }
 
             idx++;
@@ -241,7 +267,6 @@ document.addEventListener("keydown", (event) => {
 
         if (letterIdx > 0) {
             letterIdx--;
-
             const currentLetter = currentLetters[letterIdx];
             if (currentLetter) {
                 if(currentLetter.classList.contains("extra")){
@@ -251,36 +276,42 @@ document.addEventListener("keydown", (event) => {
                     currentLetter.classList.remove("correct", "incorrect");
                 }
             }
-        // Ini kalau misalnya lagi di awal kata dan belum ada huruf sama sekali, balik ke kata sebelumnya
         } 
+        // Ini kalau misalnya lagi di awal kata dan belum ada huruf sama sekali, balik ke kata sebelumnya
         else if (wordIdx > 0) {
-            wordIdx--;
-            const prevWordDiv = inputText.querySelectorAll(".word")[wordIdx];
-            const prevLetters = prevWordDiv.querySelectorAll("letter");
+            const prevWordDiv = inputText.querySelectorAll(".word")[wordIdx - 1];
             
-            letterIdx = prevLetters.length;
-
-            for (let i = prevLetters.length - 1; i >= 0; i--) {
-                if (prevLetters[i].classList.contains("correct") || 
-                    prevLetters[i].classList.contains("incorrect") || 
-                    prevLetters[i].classList.contains("extra")) {
-                    letterIdx = i + 1;
-                    break;  
+            // Only allow going back to previous word if it contains an error
+            if (prevWordDiv.classList.contains("error")) {
+                wordIdx--;
+                const prevLetters = prevWordDiv.querySelectorAll("letter");
+                let invalid = false;
+                letterIdx = prevLetters.length;
+    
+                for (let i = prevLetters.length - 1; i >= 0; i--) {
+                    if (prevLetters[i].classList.contains("correct")) {
+                        letterIdx = i + 1;
+                        break;  
+                    }
+                    if (prevLetters[i].classList.contains("incorrect") || 
+                        prevLetters[i].classList.contains("extra")) {
+                        letterIdx = i + 1;
+                        invalid = true;
+                        break;  
+                    }
+                }
+    
+                // Hapus class error dari kata sebelumnya
+                if(invalid){
+                    prevWordDiv.classList.remove("error");
                 }
             }
-
-            // Hapus class error dari kata sebelumnya
-            prevWordDiv.classList.remove("error");
         }
 
-        //kode  CF
-        // ini tujuannnya override tentuin error O(n)
-    
         let incorrectFlag = false
-        //find incorrect
         const prevWordDiv = inputText.querySelectorAll(".word")[wordIdx];
         const prevLetters = prevWordDiv.querySelectorAll("letter");
-        // console.log( prevLetters)
+        
         for (let i = prevLetters.length - 1; i >= 0; i--) {
             if (prevLetters[i].classList.contains("incorrect")) {
                 incorrectFlag = true;
@@ -288,17 +319,14 @@ document.addEventListener("keydown", (event) => {
             }
         }
         if(incorrectFlag) {
-            // kalau ga ada huruf salah, maka error
-            // prevWordDiv.classList.add("error");
             error = true
-        }else{
-            // kalau ada huruf salah, maka error
+        } else {
             prevWordDiv.classList.remove("error");
-            error=false;
+            error = false;
         }
-        //===============
     }
 })
+
 
 function getAllWordsAndLetters() {
     const words = inputText.querySelectorAll(".word");
@@ -352,41 +380,11 @@ document.addEventListener("keydown", (event) => {
     }  
 });  
 
+
+//JANGAN LUPA DI REMOVE NANTI + CLASS HIDDEN DI SECTION GAME
+// document.getElementById("result").style.display = "block";
+
 updateCursorPosition();
-
-const timeOption = document.getElementById('timeOption');
-const modeOption = document.getElementById('mode-option');
-
-function showOption() {
-    modeOption.classList.remove('hide');
-    modeOption.classList.add('show');
-}
-
-function hideOption() {
-    modeOption.classList.remove('show');
-    modeOption.classList.add('hide');
-}
-
-timeOption.addEventListener('click', () => {
-    if (modeOption.classList.contains('gone')) {
-        modeOption.classList.remove('gone');
-        modeOption.classList.add('show');
-    } else {
-        modeOption.classList.remove('show');
-        modeOption.classList.add('gone');
-    }
-});
-
-// document.getElementById('timeOption').addEventListener('click', function() {
-//     const mode = document.getElementById('mode');
-    
-//     // Check the current width and toggle accordingly
-//     if (mode.style.width === '900px') {
-//         mode.style.width = '600px'; // Original width
-//     } else {
-//         mode.style.width = '900px'; // Increased width
-//     }
-// });
 
 function gameEnd() {
     const game = document.querySelector(".main-game");
@@ -396,18 +394,19 @@ function gameEnd() {
     result.style.display = "block";
     clearInterval(interval);
     
-    const maxValue = Math.max(...data.map(d => d.wpm));
+    const maxWPM = Math.max(...data.map(d => d.wpm), ...dataRaw.map(d => d.wpm));
     const maxTime = Math.max(...data.map(d => d.time));
     const chartHeight = 300;
     const chartWidth = document.getElementById('chart').offsetWidth - 20;
     
     const chart = document.getElementById('chart');
-    const points = [];
+    const pointsCorrect = [];
+    const pointsRaw = [];
     
     const ySteps = 5;
     for (let i = 0; i <= ySteps; i++) {
-        const value = Math.round((maxValue / ySteps) * i);
-        const y = (value / maxValue) * chartHeight;
+        const value = Math.round((maxWPM / ySteps) * i);
+        const y = (value / maxWPM) * chartHeight;
     
         const indicator = document.createElement('div');
         indicator.className = 'y-indicator';
@@ -417,26 +416,44 @@ function gameEnd() {
         const label = document.createElement('div');
         label.className = 'label';
         label.textContent = value;
-    
+        
         indicator.appendChild(label);
         chart.appendChild(indicator);
     }
     
-    // Buat gambarin titik penghubung
-    data.forEach((item, index) => {
-        // Normalize x-coordinate by subtracting first time value
-        const firstTime = data[0].time;
+    // Buat gambarin titik dataRaw dan data
+    dataRaw.forEach((item, index) => {
+        const firstTime = dataRaw[0].time;
         const normalizedTime = item.time - firstTime;
         const x = (normalizedTime / (maxTime - firstTime)) * chartWidth;
-        const y = (item.wpm / maxValue) * chartHeight;
+        const y = (item.wpm / maxWPM) * chartHeight;
     
         const point = document.createElement('div');
         point.className = 'point';
         point.style.left = `${x}px`;
         point.style.bottom = `${y + 2}px`;
-        point.style.width = "8px";
-        point.style.height = "8px";
+        point.style.backgroundColor = 'var(--logoTextColor)';
+        // point.style.width = "8px";
+        // point.style.height = "8px";
     
+        chart.appendChild(point);
+        pointsRaw.push({ x, y });
+    });
+
+    data.forEach((item, index) => {
+        const firstTime = data[0].time;
+        const normalizedTime = item.time - firstTime;
+        const x = (normalizedTime / (maxTime - firstTime)) * chartWidth;
+        const y = (item.wpm / maxWPM) * chartHeight;
+    
+        const point = document.createElement('div');
+        point.className = 'point';
+        point.style.left = `${x}px`;
+        point.style.bottom = `${y + 2}px`;
+        point.style.backgroundColor = 'var(--logoColor)';
+        // point.style.width = "8px";
+        // point.style.height = "8px";
+        
         const label = document.createElement('div');
         label.className = 'label';
         label.textContent = item.time;
@@ -445,30 +462,46 @@ function gameEnd() {
     
         chart.appendChild(point);
         chart.appendChild(label);
-        points.push({ x, y });
-    });    
+        pointsCorrect.push({ x, y });
+    }); 
     
     // Buat gambarin garis garis penghubung
-    for (let i = 0; i < points.length - 1; i++) {
-        const x1 = points[i].x;
-        const y1 = points[i].y;
-        const x2 = points[i + 1].x;
-        const y2 = points[i + 1].y;
-    
+    for (let i = 0; i < pointsRaw.length - 1; i++) {
         const line = document.createElement('div');
         line.className = 'line';
-        line.style.left = `${x1}px`;
-        line.style.bottom = `${y1 + 8}px`;
+        line.style.left = `${pointsRaw[i].x}px`;
+        line.style.bottom = `${pointsRaw[i].y + 10}px`;
+        line.style.backgroundColor = 'var(--logoTextColor)';
     
-        const dx = x2 - x1;
-        const dy = y2 - y1;
+        const dx = pointsRaw[i + 1].x - pointsRaw[i].x;
+        const dy = pointsRaw[i + 1].y - pointsRaw[i].y;
         const length = Math.sqrt(dx * dx + dy * dy);
         const angle = -Math.atan2(dy, dx) * (180 / Math.PI);
     
         line.style.width = `${length}px`;
         line.style.transform = `rotate(${angle}deg)`;
-        line.style.transformOrigin = '0 50%';
-    
+        
         chart.appendChild(line);
     }
+
+    for (let i = 0; i < pointsCorrect.length - 1; i++) {
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.style.left = `${pointsCorrect[i].x}px`;
+        line.style.bottom = `${pointsCorrect[i].y + 10}px`;
+        line.style.backgroundColor = 'var(--logoColor)';
+    
+        const dx = pointsCorrect[i + 1].x - pointsCorrect[i].x;
+        const dy = pointsCorrect[i + 1].y - pointsCorrect[i].y;
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = -Math.atan2(dy, dx) * (180 / Math.PI);
+    
+        line.style.width = `${length}px`;
+        line.style.transform = `rotate(${angle}deg)`;
+        
+        chart.appendChild(line);
+    }
+
+    console.log("Raw data", data);
+    console.log("Data", dataRaw);
 }
