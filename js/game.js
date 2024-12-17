@@ -377,6 +377,11 @@ document.addEventListener("keydown", (event) => {
         return;
     }
 
+    if(event.key != null & !press && isNotGeneralSymbol(event.key)){
+        press = true;
+        interval = reduceTime();
+    }
+
     if (gameMode === "zen") {
         if (event.key === 'Backspace') {
             const words = inputText.querySelectorAll(".word");
@@ -461,11 +466,6 @@ document.addEventListener("keydown", (event) => {
             count.innerHTML = formatTime(time);
         } else if (gameMode === "quote") {
             count.style.display = 'none';
-        }
-    
-        if(event.key != null & !press && isNotGeneralSymbol(event.key)){
-            press = true;
-            interval = reduceTime();
         }
     
         if(event.key == ' '){
@@ -748,15 +748,10 @@ function setGameMode(mode) {
 
 function gameEnd() {
     const generation = document.getElementById('generation');
-    console.log("GAME MODENYA", gameMode);
+    generation.style.display = gameMode === "quote" ? 'block' : 'none';
 
     clearInterval(interval);
-    if (gameMode === "quote") {
-        generation.style.display = 'block';
-    } else {
-        generation.style.display = 'none';
-    }
-
+    
     const game = document.querySelector(".main-game");
     const result = document.getElementById("result");
     const modeResult = document.getElementById("mode_result");
@@ -770,23 +765,63 @@ function gameEnd() {
     game.style.display = "none";
     result.style.display = "block";
 
-    modeResult.textContent = gameMode === 'time' ? `time ${formatTime(optionChoosedMode)}` : `words ${optionChoosedMode}`;
-    accResult.textContent = Math.floor((correctCharacters / rawCharacters) * 100) + '%';
-    const avgWPM = calculateAverageWPM(data);
-    wpmResult.textContent = Math.round(avgWPM);
-    const avgRawWPM = calculateAverageWPM(dataRaw);
-    rawResult.textContent = Math.round(avgRawWPM);
-    statsResult.textContent = `${correctCharacters}/${incorrectCharacters}/${extraCharacters}`;
-    timeResult.textContent = gameMode === "time" ? initialTime - time : elapsedTime;
-    const avgConsistency = calculateAverageConsistency(data, dataRaw);
-    consistencyResult.textContent = Math.floor(avgConsistency) + '%';
-
-    const maxWPM = Math.max(...data.map(d => d.wpm), ...dataRaw.map(d => d.wpm));
-    const maxTime = Math.max(...data.map(d => d.time));
-    const chartHeight = 300;
-    const chartWidth = document.getElementById('chart').offsetWidth - 20;
+    modeResult.textContent = gameMode === 'zen' ? 'zen' : 
+                            gameMode === 'time' ? `time ${formatTime(optionChoosedMode)}` : 
+                            `words ${optionChoosedMode}`;
     
+    const totalWords = gameMode === 'zen' ? Math.max(1, parseInt(count.innerHTML)) : correctCharacters / 5;
+    const timeInMinutes = elapsedTime / 60;
+    
+    let finalWPM = 0, rawWPM = 0;
+    
+    if (gameMode === 'zen') {
+        finalWPM = Math.round(totalWords / timeInMinutes);
+        rawWPM = finalWPM;
+    } else {
+        finalWPM = calculateAverageWPM(data);
+        rawWPM = calculateAverageWPM(dataRaw);
+    }
+
+    finalWPM = isNaN(finalWPM) ? 0 : Math.max(0, Math.round(finalWPM));
+    rawWPM = isNaN(rawWPM) ? 0 : Math.max(0, Math.round(rawWPM));
+
+    const accuracy = rawCharacters > 0 ? (correctCharacters / rawCharacters) * 100 : 0;
+    
+    accResult.textContent = Math.floor(accuracy) + '%';
+    wpmResult.textContent = finalWPM;
+    rawResult.textContent = rawWPM;
+    statsResult.textContent = `${correctCharacters}/${incorrectCharacters}/${extraCharacters}`;
+    timeResult.textContent = gameMode === 'time' ? initialTime : elapsedTime;
+    
+    const avgConsistency = gameMode === 'zen' ? 100 : calculateAverageConsistency(data, dataRaw);
+    consistencyResult.textContent = Math.floor(isNaN(avgConsistency) ? 0 : avgConsistency) + '%';
+
     const chart = document.getElementById('chart');
+    chart.innerHTML = '';
+
+    if (gameMode === 'zen') {
+        data = [];
+        dataRaw = [];
+        
+        if (totalWords > 0 && elapsedTime > 0) {
+            for (let i = 1; i <= elapsedTime; i++) {
+                const minutesPassed = i / 60;
+                const wordsAtThisPoint = Math.min(totalWords, Math.floor(totalWords * (i / elapsedTime)));
+                const currentWPM = Math.round(wordsAtThisPoint / minutesPassed);
+                data.push({ time: i, wpm: currentWPM });
+                dataRaw.push({ time: i, wpm: currentWPM });
+            }
+        } else {
+            data.push({ time: 1, wpm: 0 });
+            dataRaw.push({ time: 1, wpm: 0 });
+        }
+    }
+
+    const maxWPM = Math.max(1, ...data.map(d => d.wpm), ...dataRaw.map(d => d.wpm));
+    const maxTime = Math.max(1, ...data.map(d => d.time));
+    const chartHeight = 300;
+    const chartWidth = chart.offsetWidth - 20;
+    
     const pointsCorrect = [];
     const pointsRaw = [];
     
