@@ -120,10 +120,6 @@ function showZenOptions(){
     modeOption.style.display = 'none';
     count.innerHTML = '0';
     inputText.innerHTML = '';
-
-    const wordDiv = document.createElement("div");
-    wordDiv.className = "word";
-    inputText.appendChild(wordDiv);
 }
 
 function formatTime(seconds) {
@@ -377,7 +373,7 @@ document.addEventListener("keydown", (event) => {
         return;
     }
 
-    if (gameMode === "zen") {
+    if(gameMode === "zen"){
         if (event.key === 'Backspace') {
             const words = inputText.querySelectorAll(".word");
             const currentWord = words[words.length - 1];
@@ -413,30 +409,20 @@ document.addEventListener("keydown", (event) => {
             rawCharacters++;
             letterIdx++;
             
-            requestAnimationFrame(() => {
-                updateCursorPosition();
-            });
+            updateCursorPosition();
             return;
         }
 
-        if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+        if (event.key.length === 1 && event.key !== ' ') {
             const words = inputText.querySelectorAll(".word");
-            const currentWord = words[words.length - 1] || (() => {
-                const newWord = document.createElement("div");
-                newWord.className = "word";
-                inputText.appendChild(newWord);
-                return newWord;
-            })();
-    
-            const currentLetters = currentWord.querySelectorAll("letter");
-            if (currentLetters.length < 30) {
-                const letterSpan = document.createElement("letter");
-                letterSpan.textContent = event.key;
-                letterSpan.classList.add("correct");
-                currentWord.appendChild(letterSpan);
-            } else {
-                return;
-            }
+            console.log("WORDS",words);
+            const currentWord = words[words.length - 1];
+            console.log("current WORD",currentWord);
+            
+            const letterSpan = document.createElement("letter");
+            letterSpan.textContent = event.key;
+            letterSpan.classList.add("correct");
+            currentWord.appendChild(letterSpan);
             
             correctCharacters++;
             rawCharacters++;
@@ -448,7 +434,7 @@ document.addEventListener("keydown", (event) => {
             
             data.push({ time: currentTime, wpm: wpm });
             dataRaw.push({ time: currentTime, wpm: wpm });
-    
+
             updateCursorPosition();
             return;
         }
@@ -475,13 +461,13 @@ document.addEventListener("keydown", (event) => {
                     currentWord.classList.add("error");
                 }
     
-                if (gameMode === "zen") {
-                    // if (event.key === ' ') {
-                    const currentCount = parseInt(count.innerHTML);
-                    count.innerHTML = currentCount + 1;
-                    // }
-                    updateCursorPosition();
-                }
+                // if (gameMode === "zen") {
+                //     // if (event.key === ' ') {
+                //     const currentCount = parseInt(count.innerHTML);
+                //     count.innerHTML = currentCount + 1;
+                //     // }
+                //     updateCursorPosition();
+                // }
                 
                 wordIdx++;
                 letterIdx = 0;
@@ -494,15 +480,15 @@ document.addEventListener("keydown", (event) => {
         }
     
         if (isNotGeneralSymbol(event.key)) {
-            if (gameMode === "zen") {
-                const letterSpan = document.createElement("letter");
-                letterSpan.textContent = event.key;
-                inputText.appendChild(letterSpan);
-                correctCharacters++;
-                rawCharacters++;
-                letterIdx++;
-                updateCursorPosition();
-            } else {
+            // if (gameMode === "zen") {
+            //     const letterSpan = document.createElement("letter");
+            //     letterSpan.textContent = event.key;
+            //     inputText.appendChild(letterSpan); // Append typed letters directly
+            //     correctCharacters++;
+            //     rawCharacters++; // Update character counts
+            //     letterIdx++;
+            //     updateCursorPosition();
+            // } else {
                 const currentWordDiv = inputText.querySelectorAll(".word")[wordIdx];
                 const currentLetters = currentWordDiv.querySelectorAll("letter");
     
@@ -557,7 +543,7 @@ document.addEventListener("keydown", (event) => {
                     // Kalau sudah mencapai batas 7 huruf ekstra, skip
                     return;
                 }
-            }
+            // }
             
         }
     
@@ -581,6 +567,7 @@ document.addEventListener("keydown", (event) => {
             else if (wordIdx > 0) {
                 const prevWordDiv = inputText.querySelectorAll(".word")[wordIdx - 1];
                 
+                // Only allow going back to previous word if it contains an error
                 if (prevWordDiv.classList.contains("error")) {
                     wordIdx--;
                     const prevLetters = prevWordDiv.querySelectorAll("letter");
@@ -643,37 +630,11 @@ function getAllWordsAndLetters() {
 }
 
 function updateCursorPosition() {  
-    if (gameMode === "zen") {
-        const words = inputText.querySelectorAll(".word");
-        const currentWord = words[words.length - 1];
-        
-        if (currentWord) {
-            const letters = currentWord.querySelectorAll("letter");
-            if (letters.length > 0) {
-                const lastLetter = letters[letters.length - 1];
-                const rect = lastLetter.getBoundingClientRect();
-                cursor.style.top = `${rect.top + 5}px`;
-                cursor.style.left = `${rect.right}px`;
-            } else {
-                const rect = currentWord.getBoundingClientRect();
-                cursor.style.top = `${rect.top + 5}px`;
-                cursor.style.left = `${rect.left}px`;
-            }
-        } else {
-            const wordDiv = document.createElement("div");
-            wordDiv.className = "word";
-            inputText.appendChild(wordDiv);
-            const rect = wordDiv.getBoundingClientRect();
-            cursor.style.top = `${rect.top + 5}px`;
-            cursor.style.left = `${rect.left}px`;
-        }
-        return;
-    }
-
     const currentWordDiv = inputText.querySelectorAll(".word")[wordIdx];  
     if (!currentWordDiv) return;
 
     const currentLetters = currentWordDiv.querySelectorAll("letter");  
+    // const currentLetter = currentLetters[letterIdx];  
 
     if (letterIdx < currentLetters.length) {
         const currentLetter = currentLetters[letterIdx];

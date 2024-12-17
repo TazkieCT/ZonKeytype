@@ -1,11 +1,11 @@
 const root = document.querySelector(":root");
 const style = getComputedStyle(root);
 
-let logoColor = style.getPropertyValue("--logoColor"); /* Color Logo */
-let logoTextColor = style.getPropertyValue("--logoTextColor"); /* Color Logo Teks */
-let textColor = style.getPropertyValue("--textColor"); /* Color Teks Konten */
-let backgroundColor = style.getPropertyValue("--backgroundColor"); /* Color Background Web */
-let subBackgroundColor = style.getPropertyValue("--subBackgroundColor"); /* Color Sub-Background Web (Lebih gelap) */
+let logoColor = style.getPropertyValue("--logoColor");
+let logoTextColor = style.getPropertyValue("--logoTextColor");
+let textColor = style.getPropertyValue("--textColor");
+let backgroundColor = style.getPropertyValue("--backgroundColor");
+let subBackgroundColor = style.getPropertyValue("--subBackgroundColor");
 
 const themeColorsArray = [
     {
@@ -115,7 +115,7 @@ const modal = document.getElementById("theme-modal");
 const closeButton = document.querySelector(".close-button");
 
 function showModal() {
-    console.log("Showing modal.......");
+    console.log("Showing modal......."); 
     modal.classList.add("show");
     populateThemes();
 }
@@ -156,5 +156,18 @@ function applyTheme(themeIndex) {
     root.style.setProperty("--backgroundColor", selectedTheme.backgroundColor);
     root.style.setProperty("--subBackgroundColor", selectedTheme.subBackgroundColor);
 
+    localStorage.setItem("selectedTheme", themeIndex);
+
     hideModal();
 }
+
+function loadSavedTheme() {
+    const savedThemeIndex = localStorage.getItem("selectedTheme");
+    if (savedThemeIndex !== null) {
+        applyTheme(savedThemeIndex);
+    } else {
+        applyTheme(0);
+    }
+}
+
+window.addEventListener("DOMContentLoaded", loadSavedTheme);

@@ -1,9 +1,9 @@
 :root {
-    --logoColor: #FFB800; /* Color Logo */
-    --logoTextColor: #D1D0C5; /* Color Logo Teks */
-    --textColor: #646669; /* Color Teks Konten */
-    --backgroundColor: #323437; /* Color Background Web */
-    --subBackgroundColor: #2C2E31; /* Color Sub-Background Web (Lebih gelap) */
+    --logoColor: #FFB800;
+    --logoTextColor: #D1D0C5;
+    --textColor: #646669;
+    --backgroundColor: #323437;
+    --subBackgroundColor: #2C2E31;
 }
 
 body{
@@ -60,7 +60,7 @@ a{
     align-items: center;
 }
 
-.timer{
+.count{
     color: var(--logoColor);
     position: absolute;
     top: -3rem;
@@ -70,10 +70,18 @@ a{
 
 .reload{
     position: absolute;
-    bottom: -3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    /* top: 50%; */
     left: 50%;
+    transform: translate(-50%, -50%);
+    bottom: -3rem;
     font-size: 2rem;
-    width: 4rem;
+
+
+    z-index: 10;
 }
 
 .result-restart{
@@ -180,18 +188,29 @@ a{
     width: 100%;
 }
 
-.hidden{
-    display: none;
-}
-
 .panel{
     position: absolute;
     top: 0;
+    width: fit-content;
+    margin-inline: auto;
     background-color: var(--subBackgroundColor);
     /* padding: 0.4rem 3rem; */
     border-radius: 0.4rem;
     /* max-width: max-content; */
     transition: max-width 200ms ease-in-out, width 200ms ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-in-out;
 }
 
 .button-panel, .text-footer{
@@ -305,12 +324,8 @@ a{
     height: calc(30% - 0.3em);
 }
 
-.hide {
+.hidden {
     opacity: 0;
-}
-
-.gone {
-    display: none;
 }
 
 /* CARA KE 1 */
