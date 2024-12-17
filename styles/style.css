@@ -77,7 +77,7 @@ a{
     /* top: 50%; */
     left: 50%;
     transform: translate(-50%, -50%);
-    bottom: -3rem;
+    bottom: -4rem;
     font-size: 2rem;
 
 
@@ -114,7 +114,7 @@ a{
 .text-board {
     color: var(--textColor);
     font-size: 2rem;
-    width: 97rem;
+    width: 94rem;
     height: 10rem;
     display: flex;
     flex-wrap: wrap;
@@ -188,6 +188,10 @@ a{
     width: 100%;
 }
 
+.height-full{
+    height: 100%;
+}
+
 .panel{
     position: absolute;
     top: 0;
@@ -225,6 +229,11 @@ a{
     transition: color 100ms ease-in-out;
 }
 
+.button-icon-2{
+    width: 1rem;
+    height: 1rem;
+}
+
 .button-panel:hover .text-panel{
     color: var(--logoTextColor);
 }
@@ -241,9 +250,14 @@ a{
     margin-right: 0.5rem;
 }
 
+.mr-s{
+    margin-right: 0.5rem;
+}
+
 .spacer{
     border: 3px solid var(--backgroundColor);
     border-radius: 1rem;
+    margin-inline: 0rem 0.5rem;
 }
 
 .main-game{
@@ -270,25 +284,24 @@ a{
 
 .modal-content {
     background-color: var(--backgroundColor);
-    padding: 20px;
     border-radius: 5px;
     width: 300px;
     text-align: center;
     color: var(--textColor);
     box-shadow: 0 0 0 .2em var(--subBackgroundColor);
     position: relative;
+    width: 30rem;
 }
 
 .close-button {
     position: absolute;
-    top: 10px;
     right: 15px;
     font-size: 20px;
     cursor: pointer;
 }
 
 .theme-title{
-    margin: 0;
+    margin-top: 0;
     padding-bottom: 5px;
 }
 
@@ -320,7 +333,7 @@ a{
     box-sizing: border-box;
     margin: 0.2em 0.3em;
     line-height: 1;
-    vertical-align: middle;
+    vertical-align: top;
     height: calc(30% - 0.3em);
 }
 
@@ -475,12 +488,12 @@ body {
 
 .fade-out {
     opacity: 0;
-    transition: opacity 0.1s ease-out;
+    transition: opacity 0.05s ease-out;
 }
 
 .fade-in {
 opacity: 1;
-transition: opacity 0.1s ease-in;
+transition: opacity 0.05s ease-in;
 }
 
 .result-title{
@@ -503,3 +516,70 @@ transition: opacity 0.1s ease-in;
     font-size: 1.5rem;
     color: var(--logoColor);
 }
+
+.colorList{
+    padding: 0.3rem 2rem;
+}
+
+.colorList:hover{
+    color: var(--backgroundColor);
+    cursor: pointer;
+    background-color: var(--logoTextColor);
+}
+
+.pallete{
+    display: flex;
+    border-radius: 1rem;
+    justify-content: space-evenly;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: var(--subBackgroundColor);
+    width: 4rem;
+    padding: 0.3rem 0.4rem;
+}
+
+.colorPallete{
+    border-radius: 1rem;
+    width: 13px;
+    height: 13px;
+    background-color: var(--logoColor);
+}
+
+.pcOnly{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10000;
+    background-color: var(--backgroundColor);
+    display: none;
+    color: var(--logoColor);
+}
+
+.icon-pc{
+    width: 30%;
+    height: auto;
+}
+
+@media screen and (max-width: 1439px), (max-height: 499px) {
+    .pcOnly{
+        display: block;
+    }
+
+    .pc{
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1700px){
+    .text-board{
+        width: 80rem;
+    }
+}
+
+/* @media screen and (max-width: 1500px) {
+    .text-board {
+        width: 80rem;
+    }
+} */

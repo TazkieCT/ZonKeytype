@@ -20,7 +20,7 @@ const reload = document.getElementById("reload");
 const inputText = document.getElementById("text-input");
 const pause = document.getElementById("pause");
 
-let totalWords = 25;
+let totalWords = 500;
 let gameMode = 'time';
 let optionChoosedMode = time;
 
@@ -92,6 +92,12 @@ function showTimeOptions(){
     option2.textContent = timeOptions[1];
     option3.textContent = timeOptions[2];
     option4.textContent = timeOptions[3];
+    time = timeOptions[0];
+    initialTime = timeOptions[0];
+    totalWords = 500;
+    optionChoosedMode = timeOptions[0];
+    reset();
+    
     console.log(gameMode);
 }
 
@@ -102,6 +108,9 @@ function showWordOptions(){
     option2.textContent = wordsOptions[1];
     option3.textContent = wordsOptions[2];
     option4.textContent = wordsOptions[3];
+    totalWords = wordsOptions[0];
+    optionChoosedMode = wordsOptions[0];
+    reset();
     console.log(gameMode);
 }
 
@@ -206,6 +215,7 @@ const generations = {
     "24-2": "Confront the challenges of learning and outgrow the boundaries together."
 };
 
+let isResetting = false;
   
 function generateRandomString(mode = 'default'){
     const wordsArray = [
@@ -259,12 +269,17 @@ function generateRandomString(mode = 'default'){
 }
 
 function reset() {
+    if (isResetting) return;
+    isResetting = true;
+
     inputText.classList.remove('fade-in');
+    inputText.classList.remove('fade-out');
+    
+    void inputText.offsetWidth;
+    
     inputText.classList.add('fade-out');
     
-    inputText.addEventListener('transitionend', function handler() {
-        inputText.removeEventListener('transitionend', handler);
-        
+    const resetContent = () => {
         time = initialTime;
         elapsedTime = 0;
         correctCharacters = 0;
@@ -284,20 +299,42 @@ function reset() {
         count.style.display = (gameMode === "quote") ? 'none' : 'block';
         count.innerHTML = gameMode === "time" ? formatTime(time) : gameMode === "words" ? `0/${totalWords}` : '0';
         inputText.innerHTML = "";
-        
+
+        document.getElementById("text-input").scrollTop = 0;
+
         if (gameMode !== "zen") {
             generateRandomString(gameMode);
         }
-        words = getAllWordsAndLetters();
-        updateCursorPosition();
-
+        
         inputText.classList.remove('fade-out');
-        inputText.classList.remove('fade-in');
+        
+        void inputText.offsetWidth;
+        
+        inputText.classList.add('fade-in');
         
         requestAnimationFrame(() => {
-            inputText.classList.add('fade-in');
+            words = getAllWordsAndLetters();
+            updateCursorPosition();
         });
-    });
+
+        setTimeout(() => {
+            isResetting = false;
+        }, 200);
+    };
+
+    const handleTransitionEnd = (e) => {
+        if (e.propertyName === 'opacity') {
+            inputText.removeEventListener('transitionend', handleTransitionEnd);
+            resetContent();
+        }
+    };
+
+    const fallbackTimeout = setTimeout(() => {
+        inputText.removeEventListener('transitionend', handleTransitionEnd);
+        resetContent();
+    }, 50);
+
+    inputText.addEventListener('transitionend', handleTransitionEnd);
 }
 
 function resetAFKTimeout() {
@@ -383,9 +420,12 @@ document.addEventListener("keydown", (event) => {
     }
 
     if (gameMode === "zen") {
+        const words = inputText.querySelectorAll(".word");
+        const currentWord = words[words.length - 1];
+        const currentLetters = currentWord ? currentWord.querySelectorAll("letter") : [];
+
         if (event.key === 'Backspace') {
-            const words = inputText.querySelectorAll(".word");
-            const currentWord = words[words.length - 1];
+            
             
             if (currentWord) {
                 const letters = currentWord.querySelectorAll("letter");
@@ -407,6 +447,10 @@ document.addEventListener("keydown", (event) => {
         }
 
         if (event.key === ' ') {
+            if (currentLetters.length === 0) {
+                return;
+            }
+
             const wordDiv = document.createElement("div");
             wordDiv.className = "word";
             inputText.appendChild(wordDiv);
@@ -649,14 +693,27 @@ function updateCursorPosition() {
         
         if (currentWord) {
             const letters = currentWord.querySelectorAll("letter");
+            const textBoard = document.getElementById("text-input");
+            const textBoardRect = textBoard.getBoundingClientRect();
+
             if (letters.length > 0) {
                 const lastLetter = letters[letters.length - 1];
                 const rect = lastLetter.getBoundingClientRect();
-                cursor.style.top = `${rect.top + 5}px`;
-                cursor.style.left = `${rect.right}px`;
+                
+                // Scroll jika posisi kursor mendekati batas bawah
+                const bottomThreshold = textBoardRect.bottom - (lastLetter.offsetHeight * 2);
+                if (rect.bottom > bottomThreshold) {
+                    const scrollAmount = lastLetter.offsetHeight + parseFloat(getComputedStyle(currentWord).marginTop);
+                    textBoard.scrollTop += scrollAmount;
+                }
+
+                // Tentukan posisi kursor setelah scroll
+                const newRect = lastLetter.getBoundingClientRect(); // Ambil posisi baru setelah scroll
+                cursor.style.top = `${newRect.top + 5}px`;
+                cursor.style.left = `${newRect.right}px`;
             } else {
                 const rect = currentWord.getBoundingClientRect();
-                cursor.style.top = `${rect.top + 5}px`;
+                cursor.style.top = `${rect.top}px`;
                 cursor.style.left = `${rect.left}px`;
             }
         } else {
@@ -674,18 +731,38 @@ function updateCursorPosition() {
     if (!currentWordDiv) return;
 
     const currentLetters = currentWordDiv.querySelectorAll("letter");  
+    const textBoard = document.getElementById("text-input");
+    const textBoardRect = textBoard.getBoundingClientRect();
+    const wordHeight = currentWordDiv.offsetHeight;
 
     if (letterIdx < currentLetters.length) {
         const currentLetter = currentLetters[letterIdx];
         const rect = currentLetter.getBoundingClientRect();  
-        cursor.style.top = `${rect.top + 5}px`;
-        cursor.style.left = `${rect.left}px`;
+        
+        // INI KALAU KURSORNYA DI MENDEKATI BATAS BAWAH
+        const bottomThreshold = textBoardRect.bottom - (wordHeight * 2);
+        if (rect.bottom > bottomThreshold) {
+            const scrollAmount = wordHeight + parseFloat(getComputedStyle(currentWordDiv).marginTop);
+            textBoard.scrollTop += scrollAmount + 7;
+        }
+
+        const newRect = currentLetter.getBoundingClientRect();
+        cursor.style.top = `${newRect.top + 5}px`;
+        cursor.style.left = `${newRect.left}px`;
     } else {
         const lastLetter = currentLetters[currentLetters.length - 1];
         if (lastLetter) {
             const rect = lastLetter.getBoundingClientRect();  
-            cursor.style.top = `${rect.top + 5}px`;
-            cursor.style.left = `${rect.right}px`;  
+            
+            // INI KALAU KURSORNYA DI MENDEKATI BATAS BAWAH
+            const bottomThreshold = textBoardRect.bottom - (wordHeight * 2);
+            if (rect.bottom > bottomThreshold) {
+                const scrollAmount = wordHeight + parseFloat(getComputedStyle(currentWordDiv).marginTop);
+                textBoard.scrollTop += scrollAmount + 7;
+            }
+            const newRect = lastLetter.getBoundingClientRect();
+            cursor.style.top = `${newRect.top + 5}px`;
+            cursor.style.left = `${newRect.right}px`;
         }
     }
 }
@@ -953,6 +1030,8 @@ function handleRestart() {
     clearInterval(interval);
     clearTimeout(afkTimeout);
     isAFK = false;
+
+    document.getElementById("text-input").scrollTop = 0;
 
     idx = 0;
     wordIdx = 0;

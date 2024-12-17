@@ -69,7 +69,7 @@ const themeColorsArray = [
         }
     },
     {
-        name: "snow candy",
+        name: "PI",
         colors: {
             logoColor: "#FF360D",
             logoTextColor: "#000000",
@@ -137,16 +137,73 @@ function populateThemes() {
     const themeList = document.getElementById("theme-list");
     themeList.innerHTML = "";
 
+    let currentThemeIndex = localStorage.getItem("selectedTheme") !== null ? localStorage.getItem("selectedTheme") : 0;
+
     themeColorsArray.forEach((theme, index) => {
         const themeItem = document.createElement("div");
-        themeItem.textContent = theme.name;
-        themeItem.style.cursor = "pointer";
+        themeItem.classList.add("flex", "flex-between", "y-center", "colorList");
         
-        themeItem.addEventListener("click", () => applyTheme(index));
+        const themeName = document.createElement("div");
+        themeName.textContent = theme.name.charAt(0).toUpperCase() + theme.name.slice(1);
+        themeName.style.cursor = "pointer";
+
+        themeItem.addEventListener("click", () => {
+            applyTheme(index);
+            currentThemeIndex = index;
+        });
+
+        const paletteContainer = document.createElement("div");
+        paletteContainer.classList.add("pallete");
+        paletteContainer.style.backgroundColor = theme.colors.backgroundColor;
+
+        const logoColor = theme.colors.logoColor;
+        const logoTextColor = theme.colors.logoTextColor;
+        const textColor = theme.colors.textColor;
+        
+        const colorsToShow = [logoColor, textColor, logoTextColor];
+
+        colorsToShow.forEach(color => {
+            const colorSwatch = document.createElement("div");
+            colorSwatch.classList.add("colorPallete");
+            colorSwatch.style.backgroundColor = color;
+            paletteContainer.appendChild(colorSwatch);
+        });
+
+        themeItem.appendChild(themeName);
+        themeItem.appendChild(paletteContainer);
+        
+        let hoverTimeout;
+        let leaveTimeout;
+
+        themeItem.addEventListener("mouseenter", () => {
+            clearTimeout(leaveTimeout);
+            hoverTimeout = setTimeout(() => {
+                hoverTheme(index);
+            }, 500);
+        });
+
+        themeItem.addEventListener("mouseleave", () => {
+            clearTimeout(hoverTimeout);
+            leaveTimeout = setTimeout(() => {
+                hoverTheme(currentThemeIndex);
+            }, 500);
+        });
         
         themeList.appendChild(themeItem);
     });
 }
+
+function hoverTheme(themeIndex) {
+    const selectedTheme = themeColorsArray[themeIndex].colors;
+    root.style.setProperty("--logoColor", selectedTheme.logoColor);
+    root.style.setProperty("--logoTextColor", selectedTheme.logoTextColor);
+    root.style.setProperty("--textColor", selectedTheme.textColor);
+    root.style.setProperty("--backgroundColor", selectedTheme.backgroundColor);
+    root.style.setProperty("--subBackgroundColor", selectedTheme.subBackgroundColor);
+
+    localStorage.setItem("selectedTheme", themeIndex);
+}
+
 
 function applyTheme(themeIndex) {
     const selectedTheme = themeColorsArray[themeIndex].colors;
