@@ -373,7 +373,19 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-logo.addEventListener("click", reset);
+// logo.removeEventListener("click", reset);
+
+logo.addEventListener("click", () => {
+    const game = document.querySelector(".main-game");
+    // const result = document.getElementById("result");
+    
+    if (game.style.display === "none") {
+        restart();
+    } else {
+        reset();
+    }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     showPause();
     cursor.classList.add("typing");
@@ -1010,7 +1022,7 @@ function gameEnd() {
     // console.log("Data", dataRaw);
 }
 
-function handleRestart() {
+function restart() {
     const game = document.querySelector(".main-game");
     const result = document.getElementById("result");
     
@@ -1049,9 +1061,9 @@ function handleRestart() {
 }
 
 const restartBtn = document.getElementById('restart');
-restartBtn.addEventListener('click', handleRestart);
+restartBtn.addEventListener('click', restart);
 restartBtn.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-        handleRestart();
+        restart();
     }
 });
